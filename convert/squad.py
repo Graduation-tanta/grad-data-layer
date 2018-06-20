@@ -20,12 +20,7 @@ args = parser.parse_args()
 # Read dataset 
 with open(args.input) as f:
     dataset = json.load(f)
-"""
-squad is a json file contains |=>data=========>contains|==>paragraphs==============|=>paragraph
-                              |=>version :1.1          |==>documents_id            |=>qas==========|=>answers====|=>answer_start: "N" 
-					    		                                                                   |=>id         |=>text: "answer"
-																								   |=>question: "paragraph question"
-"""                
+             
 
 # Iterate and write question-answer pairs
 with open(args.output, 'w') as f:
