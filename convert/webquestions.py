@@ -11,7 +11,7 @@ import argparse
 import re
 import json
 
-# Add class ArgumentParser to can trigger actions 
+# Add class ArgumentParser to trigger actions 
 parser = argparse.ArgumentParser()
 
 # Specify actions by using add_argument()
