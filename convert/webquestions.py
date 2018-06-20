@@ -38,6 +38,7 @@ $: Matches end of line.
 .: Matches any single character except newline.
 description|\: Matches either description or \.
 ?: Specifies position using a pattern. Doesn't have a range.
+?<= Lookbehind
 json.dumps: takes an object and produces a string.
 """
 with open(args.output, 'w') as f:
