@@ -1,3 +1,4 @@
+#SQuAD's url: https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v1.1.json
 """A script to convert the default SQuAD dataset to the format:
 
 '{"question": "q1", "answer": ["a11", ..., "a1i"]}'
