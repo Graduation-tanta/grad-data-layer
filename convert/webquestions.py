@@ -1,6 +1,8 @@
 
 """A script to convert the default WebQuestions dataset to the format:
+WebQuestions' raw: {"url": "http://www.freebase.com/view/en/justin_bieber", "targetValue": "(list (description \"Jazmyn Bieber\") (description \"Jaxon Bieber\"))", "utterance": "what is the name of justin bieber brother?"}
 
+ new format:
 '{"question": "q1", "answer": ["a11", ..., "a1i"]}'
 ...
 '{"question": "qN", "answer": ["aN1", ..., "aNi"]}'
@@ -42,9 +44,17 @@ with open(args.output, 'w') as f:
     for ex in dataset:
         question = ex['utterance']
         answer = ex['targetValue']
+"""
+for our example:
+question <= "utterance": "what is the name of justin bieber brother?"
+answers <= "(list (description \"Jazmyn Bieber\") (description \"Jaxon Bieber\"))"
+"""
         answer = re.findall(
             r'(?<=\(description )(.+?)(?=\) \(description|\)\)$)', answer
         )
         answer = [a.replace('"', '') for a in answer]
+"""
+"answer": ["Jazmyn Bieber", "Jaxon Bieber"].
+"""
         f.write(json.dumps({'question': question, 'answer': answer}))
         f.write('\n')
