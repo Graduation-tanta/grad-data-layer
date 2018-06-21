@@ -13,7 +13,7 @@ import argparse
 import re
 import json
 
-# Add class ArgumentParser to trigger actions 
+# Add class ArgumentParser to trigger actions
 parser = argparse.ArgumentParser()
 
 # Specify actions by using add_argument()
@@ -45,17 +45,24 @@ with open(args.output, 'w') as f:
     for ex in dataset:
         question = ex['utterance']
         answer = ex['targetValue']
-"""
-for our example:
-question <= "utterance": "what is the name of justin bieber brother?"
-answers <= "(list (description \"Jazmyn Bieber\") (description \"Jaxon Bieber\"))"
-"""
+        """
+        for our example:
+        question <= "utterance": "what is the name of justin bieber brother?"
+        answers <= "(list (description \"Jazmyn Bieber\") (description \"Jaxon Bieber\"))"
+        """
+
+        # https://stackoverflow.com/questions/2973436/regex-lookahead-lookbehind-and-atomic-groups
+        # https://www.shortcutfoo.com/app/dojos/regex/cheatsheet
+
         answer = re.findall(
+            # find expressions where "(description )" precedes
+            # for that expression make sure it's non empty sequence (the answer)
+            # this answer is terminated by the next ") (description" or at the end of line followed by ))
             r'(?<=\(description )(.+?)(?=\) \(description|\)\)$)', answer
         )
         answer = [a.replace('"', '') for a in answer]
-"""
-"answer": ["Jazmyn Bieber", "Jaxon Bieber"].
-"""
+        """
+        "answer": ["Jazmyn Bieber", "Jaxon Bieber"].
+        """
         f.write(json.dumps({'question': question, 'answer': answer}))
         f.write('\n')
