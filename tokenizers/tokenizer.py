@@ -1,14 +1,9 @@
-#!/usr/bin/env python3
-# Copyright 2017-present, Facebook, Inc.
-# All rights reserved.
-#
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
-"""Base tokenizer/tokens classes and utilities."""
 
 # tokenization means: Given a character sequence and a defined document unit,
 # tokenization is the task of chopping it up into pieces, called tokens ,
 # perhaps at the same time throwing away certain characters, such as punctuation.
+
+"""Base tokenizer/tokens classes and utilities."""
 
 
 import copy  # a package in python, Assignment statements in Python do not copy objects,
@@ -38,6 +33,10 @@ class Tokens(object):
     def slice(self, i=None, j=None):
         """Return a view of the list of tokens from [i, j)."""
         new_tokens = copy.copy(self)  # Return a shallow copy of self.
+
+    # A shallow copy constructs a new compound object and then (to the extent possible)
+    # inserts references into it to the objects found in the original.
+
         new_tokens.data = self.data[i: j]
         return new_tokens
 

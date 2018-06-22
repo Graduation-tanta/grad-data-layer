@@ -1,15 +1,16 @@
-#!/usr/bin/env python3
-# Copyright 2017-present, Facebook, Inc.
-# All rights reserved.
-#
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
+# tokenization means: Given a character sequence and a defined document unit,
+# tokenization is the task of chopping it up into pieces, called tokens ,
+# perhaps at the same time throwing away certain characters, such as punctuation.
+
 """Simple wrapper around the Stanford CoreNLP pipeline.
 
 Serves commands to a java subprocess running the jar. Requires java 8.
 """
 
-import copy
+import copy         # a package in python, Assignment statements in Python do not copy objects,
+                    # they create bindings between a target and an object.
+                    # For collections that are mutable or contain mutable items,
+                    # a copy is sometimes needed so one can change one copy without changing the other.
 import json
 import pexpect      # Pexpect allows your script to spawn a child application and control it
                     # as if a human were typing commands.
@@ -24,11 +25,11 @@ DEFAULTS = {
 class Tokens(object):
     """A class to represent a list of tokenized text."""
     TEXT = 0
-    TEXT_WS = 1
-    SPAN = 2
-    POS = 3
-    LEMMA = 4
-    NER = 5
+    TEXT_WS = 1  # Just simple whitespace tokenization
+    SPAN = 2  # A span is the distance measured by a human hand
+    POS = 3  # The process of classifying words into their parts of speech and labeling them accordingly
+    LEMMA = 4  # the lemmatized text of each token
+    NER = 5  # named-entity-recognition tags of each token
 
     def __init__(self, data, annotators, opts=None):
         self.data = data
@@ -41,7 +42,11 @@ class Tokens(object):
 
     def slice(self, i=None, j=None):
         """Return a view of the list of tokens from [i, j)."""
-        new_tokens = copy.copy(self)
+        new_tokens = copy.copy(self)        # Return a shallow copy of self.
+
+    # A shallow copy constructs a new compound object and then (to the extent possible)
+    # inserts references into it to the objects found in the original.
+
         new_tokens.data = self.data[i: j]
         return new_tokens
 
@@ -89,6 +94,10 @@ class Tokens(object):
         return [t[self.NER] for t in self.data]
 
     def ngrams(self, n=1, uncased=False, filter_fn=None, as_strings=True):
+
+        # an n-gram is a contiguous sequence of n items from a given sample of text or speech.
+        # The items can be phonemes, syllables, letters, words or base pairs according to the application.
+
         """Returns a list of all ngrams from length 1 to n.
 
         Args:
@@ -112,6 +121,8 @@ class Tokens(object):
         # Concatenate into strings
         if as_strings:
             ngrams = ['{}'.format(' '.join(words[s:e])) for (s, e) in ngrams]
+
+            # If you have a list of words, you can put them back together into a single string using join()
 
         return ngrams
 
