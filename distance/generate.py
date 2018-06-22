@@ -13,7 +13,7 @@ import regex as re
 import os
 import json
 import random
-import utils
+
 
 
 from functools import partial
@@ -300,7 +300,7 @@ if __name__ == "__main__":
 
     # Get classes
     ranker_class = get_class_re(args.ranker)
-    db_class = get_class(args.db)
+    db_class = get_class_re(args.db)
     tokenizer_class = get_corenlp('corenlp')
 
     # Form options

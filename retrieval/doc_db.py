@@ -1,8 +1,9 @@
 import _sqlite3
 
+db_name = input("DataBase Name: ")
+con = _sqlite3.connect('' + db_name)
+
 class DocDB(object):
-    db_name = input("DataBase Name: ")
-    con = _sqlite3.connect('' + db_name)
 
     # function to Select 10000 documents and next 10000 docs,...etc
 
