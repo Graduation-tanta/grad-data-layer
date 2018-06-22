@@ -3,7 +3,6 @@
 # perhaps at the same time throwing away certain characters, such as punctuation.
 
 """
-Serves commands to a java subprocess running the jar. Requires java 8.
 """
 
 import copy         # a package in python, Assignment statements in Python do not copy objects,
