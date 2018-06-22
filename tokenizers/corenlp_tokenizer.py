@@ -2,8 +2,7 @@
 # tokenization is the task of chopping it up into pieces, called tokens ,
 # perhaps at the same time throwing away certain characters, such as punctuation.
 
-"""Simple wrapper around the Stanford CoreNLP pipeline.
-
+"""
 Serves commands to a java subprocess running the jar. Requires java 8.
 """
 
