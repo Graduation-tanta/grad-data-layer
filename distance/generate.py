@@ -25,8 +25,7 @@ from nltk.tokenize import word_tokenize
 from nltk.chunk import ne_chunk
 from nltk.tag import pos_tag
 
-from .. import retrieval
-from .. import tokenizers
+from .. import retriever, tokenizers
 
 
 logger = logging.getLogger()
@@ -37,9 +36,9 @@ logger = logging.getLogger()
 # ------------------------------------------------------------------------------
 def get_class_re(name):
     if name == 'tfidf':
-        return retrieval.TfidfDocRanker
+        return retriever.TfidfDocRanker
     if name == 'sqlite':
-        return retrieval.DocDB
+        return retriever.DocDB
     raise RuntimeError('Invalid retriever class: %s' % name)
 
 def get_corenlp(name):
