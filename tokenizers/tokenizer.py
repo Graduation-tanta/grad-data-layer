@@ -1,9 +1,9 @@
 
-# tokenization means: Given a character sequence and a defined document unit,
-# tokenization is the task of chopping it up into pieces, called tokens ,
-# perhaps at the same time throwing away certain characters, such as punctuation.
+"""tokenization means: Given a character sequence and a defined document unit,
+   tokenization is the task of chopping it up into pieces, called tokens ,
+   perhaps at the same time throwing away certain characters, such as punctuation."""
 
-"""Base tokenizer/tokens classes and utilities."""
+#Base tokenizer/tokens classes and utilities.
 
 
 import copy  # a package in python, Assignment statements in Python do not copy objects,
@@ -18,7 +18,7 @@ class Tokens(object):
     TEXT_WS = 1   # Just simple whitespace tokenization
     SPAN = 2      # A span is the distance measured by a human hand
     POS = 3       # The process of classifying words into their parts of speech and labeling them accordingly
-    LEMMA = 4     # the lemmatized text of each token
+    LEMMA = 4     # the lemmatized text of each token: to convert a given word into its canonical form
     NER = 5       # named-entity-recognition tags of each token
 
     def __init__(self, data, annotators, opts=None):

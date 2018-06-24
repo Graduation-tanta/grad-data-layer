@@ -27,13 +27,6 @@ from nltk.tag import pos_tag
 
 from .. import retriever, tokenizers
 
-
-logger = logging.getLogger()
-
-
-# ------------------------------------------------------------------------------
-# Fetch text, tokenize + annotate
-# ------------------------------------------------------------------------------
 def get_class_re(name):
     if name == 'tfidf':
         return retriever.TfidfDocRanker
@@ -45,6 +38,13 @@ def get_corenlp(name):
     if name == 'corenlp':
         return tokenizers.CoreNLPTokenizer
     raise RuntimeError('Invalid tokenizer: %s' % name)
+
+logger = logging.getLogger()
+
+
+# ------------------------------------------------------------------------------
+# Fetch text, tokenize + annotate
+# ------------------------------------------------------------------------------
 
 PROCESS_TOK = None
 PROCESS_DB = None
