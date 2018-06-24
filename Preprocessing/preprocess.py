@@ -1,5 +1,6 @@
 """Preprocess the SQuAD dataset for training."""
 
+# SQuAD dataset: https://rajpurkar.github.io/SQuAD-explorer/
 
 # preprocess.py takes a SQuAD-formatted dataset and outputs a preprocessed, training-ready file.
 # Data that is relatively static is preprocessed and stored as a text representation
