@@ -6,13 +6,19 @@ import numpy as np
 import scipy.sparse as sp
 from sklearn.utils import murmurhash3_32
 
+# Sparse matrix(Compressed Sparse Row matrix csr) saving/loading helpers.
 
-# ------------------------------------------------------------------------------
-# Sparse matrix saving/loading helpers.
-# ------------------------------------------------------------------------------
 
 
 def save_sparse_csr(filename, matrix, metadata=None):
+    
+    
+    """
+    indptr points to row starts (tells where each row begins).
+    data is an array which contains all non-zero entries in the row-major order.
+    indices is array of column indices (tells us which cells have non-zero values)
+    """
+    #https://rushter.com/blog/scipy-sparse-matrices/
     data = {
         'data': matrix.data,
         'indices': matrix.indices,
@@ -20,6 +26,10 @@ def save_sparse_csr(filename, matrix, metadata=None):
         'shape': matrix.shape,
         'metadata': metadata,
     }
+    
+    """Save several arrays into a single file in uncompressed .npz format"""
+    #https://docs.scipy.org/doc/numpy-1.10.0/reference/generated/numpy.savez.html
+    
     np.savez(filename, **data)
 
 
@@ -30,19 +40,19 @@ def load_sparse_csr(filename):
     return matrix, loader['metadata'].item(0) if 'metadata' in loader else None
 
 
-# ------------------------------------------------------------------------------
-# Token hashing.
-# ------------------------------------------------------------------------------
 
+# Token hashing.
+
+"""Unsigned 32 bit murmurhash for feature hashing."""
 
 def hash(token, num_buckets):
-    """Unsigned 32 bit murmurhash for feature hashing."""
+    
     return murmurhash3_32(token, positive=True) % num_buckets
 
 
-# ------------------------------------------------------------------------------
+
 # Text cleaning.
-# ------------------------------------------------------------------------------
+
 
 
 STOPWORDS = {
@@ -65,24 +75,30 @@ STOPWORDS = {
     'won', 'wouldn', "'ll", "'re", "'ve", "n't", "'s", "'d", "'m", "''", "``"
 }
 
+"""Resolve different type of unicode encodings."""
+#http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.normalize.html
 
 def normalize(text):
-    """Resolve different type of unicode encodings."""
+    #https://docs.python.org/3/library/unicodedata.html
     return unicodedata.normalize('NFD', text)
 
+"""Take out english stopwords, punctuation, and compound endings."""
 
 def filter_word(text):
-    """Take out english stopwords, punctuation, and compound endings."""
+
     text = normalize(text)
     if regex.match(r'^\p{P}+$', text):
         return True
+    """The method lower() returns a copy of the string 
+    in which all case-based characters have been lowercased
+    """
+    #https://www.tutorialspoint.com/python/string_lower.htm
+    
     if text.lower() in STOPWORDS:
         return True
     return False
 
-
-def filter_ngram(gram, mode='any'):
-    """Decide whether to keep or discard an n-gram.
+"""Decide whether to keep or discard an n-gram.
 
     Args:
         gram: list of tokens (length N)
@@ -90,7 +106,10 @@ def filter_ngram(gram, mode='any'):
           'any': any single token passes filter_word
           'all': all tokens pass filter_word
           'ends': book-ended by filterable tokens
-    """
+"""
+    
+def filter_ngram(gram, mode='any'):
+   
     filtered = [filter_word(w) for w in gram]
     if mode == 'any':
         return any(filtered)
