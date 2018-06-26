@@ -3,6 +3,7 @@ import _sqlite3
 db_name = input("DataBase Name: ")
 con = _sqlite3.connect('' + db_name)
 
+
 class DocDB(object):
 
     # function to Select 10000 documents and next 10000 docs,...etc
@@ -29,16 +30,16 @@ class DocDB(object):
                 yield num
 
     # function to get text of documents from DataSet by using id
-    def get_text(self,id):
-         cur = con.cursor()
-         # query select text under where condition of id
-         cur.execute("SELECT text FROM documents WHERE id =?", (id,))
+    def get_text(self, id):
+        cur = con.cursor()
+        # query select text under where condition of id
+        cur.execute("SELECT text FROM documents WHERE id =?", (id,))
 
-         # take result coming from select query and stored them in array
-         results = [r[0] for r in cur.fetchall()]
-         # close connection with DataSet
-         cur.close()
-         return results
+        # take result coming from select query and stored them in array
+        results = [r[0] for r in cur.fetchall()]
+        # close connection with DataSet
+        cur.close()
+        return results
 
 
 

@@ -13,19 +13,15 @@ import regex as re
 import os
 import json
 import random
-
-
-
 from functools import partial
 from collections import Counter
 from multiprocessing import Pool, cpu_count
 from multiprocessing.util import Finalize
-
 from nltk.tokenize import word_tokenize
 from nltk.chunk import ne_chunk
 from nltk.tag import pos_tag
-
 from .. import retriever, tokenizers
+
 
 def get_class_re(name):
     if name == 'tfidf':
@@ -34,10 +30,12 @@ def get_class_re(name):
         return retriever.DocDB
     raise RuntimeError('Invalid retriever class: %s' % name)
 
+
 def get_corenlp(name):
     if name == 'corenlp':
         return tokenizers.CoreNLPTokenizer
     raise RuntimeError('Invalid tokenizer: %s' % name)
+
 
 logger = logging.getLogger()
 
@@ -48,7 +46,7 @@ logger = logging.getLogger()
 
 PROCESS_TOK = None
 PROCESS_DB = None
-#init functions to initiate our objects
+# init functions to initiate our objects
 """ 
 in tokenizer, we have only one class which is corenlp.
 and we can determine operation depends on this class.
@@ -56,6 +54,8 @@ in database in retriever, the  determination of classes is
 dependant on requirements either tfidf or sqlite.
 So we have 2 process tok and db
 """
+
+
 def init(tokenizer_class, tokenizer_opts, db_class=None, db_opts=None):
     global PROCESS_TOK, PROCESS_DB
     PROCESS_TOK = tokenizer_class(**tokenizer_opts)
@@ -67,19 +67,28 @@ def init(tokenizer_class, tokenizer_opts, db_class=None, db_opts=None):
         PROCESS_DB = db_class(**db_opts)
         Finalize(PROCESS_DB, PROCESS_DB.close, exitpriority=100)
 
-#fetch text by using doc_id in get_text function in DOCDB class
+
+# fetch text by using doc_id in get_text function in DOCDB class
 def fetch_text(doc_id):
     global PROCESS_DB
     return PROCESS_DB.get_text(doc_id)
 
-#which should return a Tokens class with its function
+# which should return a Tokens class with its function
+
+
 def tokenize_text(text):
     global PROCESS_TOK
     return PROCESS_TOK.tokenize(text)
 
 
 def nltk_entity_groups(text):
-    """Return all contiguous NER tagged chunks by NLTK."""
+    # Return all contiguous NER tagged chunks by NLTK.
+    # https://www.nltk.org/book/ch07.html
+    """nltk.ne_chunk: returns a nested nltk.tree.Tree object 
+    so you would have to traverse the Tree object to get to the NEs.
+    POS(part-of speech)-tagger: processes a sequence of words,
+    and attaches a part of speech tag to each word
+    """
     parse_tree = ne_chunk(pos_tag(word_tokenize(text)))
     ner_chunks = [' '.join([l[0] for l in t.leaves()])
                   for t in parse_tree.subtrees() if t.label() != 'S']
@@ -106,14 +115,36 @@ def find_answer(paragraph, q_tokens, answer, opts):
         return
 
     # Answer check
+
     if opts['regex']:
         # Add group around the whole answer
         answer = '(%s)' % answer[0]
+        # determine start and end of line with unicode of non-english chars
         ans_regex = re.compile(answer, flags=re.IGNORECASE + re.UNICODE)
+
+        # Search and find all answers matches with ans_regex
         answers = ans_regex.findall(paragraph)
+
+        # answers a[0] if a is tuple else return list comprehension of a in answers
+        """https://docs.python.org/3/library/functions.html#isinstance
+        isinstance(): instance(object, classinfo) Return true if the object argument is an instance 
+        of the classinfo argument, or of a (direct, indirect or virtual) subclass thereof. 
+        If object is not an object of the given type, the function always returns false.
+        """
         answers = {a[0] if isinstance(a, tuple) else a for a in answers}
+
+        # answers we will get in matching regex we will return a copy from it and
+        # remove whitespaces from it  if length of a (single answer) in answers
+        """https://docs.python.org/3/library/stdtypes.html#str.strip
+        strip(chars): Return a copy of the string with the leading and trailing characters removed.
+         The chars argument is a string specifying the set of characters to be removed.
+          If omitted or None, the chars argument defaults to removing whitespace.
+        """
         answers = {a.strip() for a in answers if len(a.strip()) > 0}
+
     else:
+        """if regex of answers isn't found in 
+        """
         answers = {a for a in answer if a in paragraph}
     if len(answers) == 0:
         return

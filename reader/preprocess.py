@@ -12,6 +12,7 @@ from multiprocessing.util import Finalize
 from functools import partial
 from .. import tokenizers
 
+
 def get_corenlp(name):
     if name == 'corenlp':
         return tokenizers.CoreNLPTokenizer
@@ -20,13 +21,16 @@ def get_corenlp(name):
 # ------------------------------------------------------------------------------
 # Tokenize + annotate.
 # ------------------------------------------------------------------------------
+
+
 """ 
 in tokenizer, we have only one class which is corenlp.
 and we can determine operation depends on this class."""
 
 TOK = None
 
-#init functions to initiate our variables
+
+# init functions to initiate our variables
 def init(tokenizer_class, options):
     global TOK
     # Finalize: is responsible for adding a callback to the registry.
@@ -39,24 +43,24 @@ def tokenize(text):
     global TOK
     tokens = TOK.tokenize(text)
     output = {
-        #https://datascience.stackexchange.com/questions/586/what-are-the-main-types-of-nlp-annotators
-        #Returns a list of the text of each token
-        #Args:uncased: lower cases text
+        # https://datascience.stackexchange.com/questions/586/what-are-the-main-types-of-nlp-annotators
+        # Returns a list of the text of each token
+        # Args:uncased: lower cases text
         'words': tokens.words(),
 
-        #Returns a list of [start, end] character offsets of each token.
+        # Returns a list of [start, end] character offsets of each token.
         'offsets': tokens.offsets(),
 
-        #Returns a list of part-of-speech tags of each token.
-        #Returns None if this annotation was not included.
+        # Returns a list of part-of-speech tags of each token.
+        # Returns None if this annotation was not included.
         'pos': tokens.pos(),
 
-        #Returns a list of the lemmatized text of each token.
-        #Returns None if this annotation was not included.
+        # Returns a list of the lemmatized text of each token.
+        # Returns None if this annotation was not included.
         'lemma': tokens.lemmas(),
 
-        #Returns a list of named-entity-recognition tags of each token.
-        #Returns None if this annotation was not included.
+        # Returns a list of named-entity-recognition tags of each token.
+        # Returns None if this annotation was not included.
         'ner': tokens.entities(),
     }
     return output
@@ -70,7 +74,7 @@ def tokenize(text):
 def load_dataset(path):
     """Load json file and store fields separately."""
     with open(path) as f:
-        #Load the file of squad data only data index.
+        # Load the file of squad data only data index.
         data = json.load(f)['data']
 
     """qids: question id in squad
@@ -120,7 +124,7 @@ def find_answer(offsets, begin_offset, end_offset):
     assert(len(start) <= 1)
     assert(len(end) <= 1)
     if len(start) == 1 and len(end) == 1:
-        #first answer
+        # first answer
         return start[0], end[0]
 
 
@@ -144,7 +148,6 @@ def process_dataset(data, tokenizer, workers=None):
     lemma: to convert a given word into its canonical form
     """
     workers = make_pool(initargs=(tokenizer_class, {'annotators': {'lemma'}}))
-
 
     """map(): it supports only one iterable argument though. 
     It blocks until the result is ready.
@@ -225,7 +228,7 @@ parser.add_argument('--workers', type=int, default=None)
 parser.add_argument('--tokenizer', type=str, default='corenlp')
 args = parser.parse_args()
 
-#https://docs.python.org/2/library/time.html#time.time
+# https://docs.python.org/2/library/time.html#time.time
 t0 = time.time()
 
 in_file = os.path.join(args.data_dir, args.split + '.json')
