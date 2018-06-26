@@ -2,21 +2,19 @@
 """
 preprocess function to filter/prepare Wikipedia docs.
 """
+import regex as re
+from html.parser import HTMLParser
 
-"""
-Wikipedia's dataset contains only one table called documents,
+"""Wikipedia's dataset contains only one table called documents,
 This table consists of two columns (address, text)and contains more than five millions raw
 address is an address of text(document)
 text is a document.
 """
 
-
-import regex as re
-from html.parser import HTMLParser
 """
 HTMLParser(): parses a web page’s HTML/XHTML content and provides the information we are looking for.
 """
-#https://www.pythoncentral.io/html-parser/
+# https://www.pythoncentral.io/html-parser/
 
 PARSER = HTMLParser()
 
@@ -26,7 +24,9 @@ PARSER = HTMLParser()
 """
 BLACKLIST = set(['23443579', '52643645'])
 
-#preprocessing function: extract the rest disambig pages
+# preprocessing function: extract the rest disambig pages
+
+
 def preprocess(article):
 
     # Take out HTML escaping WikiExtractor didn't clean
