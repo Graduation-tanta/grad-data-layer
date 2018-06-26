@@ -23,6 +23,7 @@ from nltk.tag import pos_tag
 from .. import retriever, tokenizers
 
 
+
 def get_class_re(name):
     if name == 'tfidf':
         return retriever.TfidfDocRanker
@@ -143,12 +144,17 @@ def find_answer(paragraph, q_tokens, answer, opts):
         answers = {a.strip() for a in answers if len(a.strip()) > 0}
 
     else:
-        """if regex of answers isn't found in 
+        """if regex of answers isn't found in paragraph we will return 
+        list comprehension of answers if the some these in paragraph
         """
+
         answers = {a for a in answer if a in paragraph}
+
     if len(answers) == 0:
         return
-
+    """
+         if there is no answer we return null
+    """
     # Entity check. Default tokenizer + NLTK to minimize falling through cracks
     q_tokens, q_nltk_ner = q_tokens
     for ne in q_tokens.entity_groups():
@@ -162,7 +168,7 @@ def find_answer(paragraph, q_tokens, answer, opts):
     p_tokens = tokenize_text(paragraph)
     p_words = p_tokens.words(uncased=True)
     q_grams = Counter(q_tokens.ngrams(
-        n=2, uncased=True, filter_fn=utils.filter_ngram
+        n=2, uncased=True, filter_fn=retriever.utils.filter_ngram
     ))
 
     best_score = 0
@@ -180,7 +186,7 @@ def find_answer(paragraph, q_tokens, answer, opts):
                 w_e = min(idx + opts['window_sz'] + len(a_words), len(p_words))
                 w_tokens = p_tokens.slice(w_s, w_e)
                 w_grams = Counter(w_tokens.ngrams(
-                    n=2, uncased=True, filter_fn=utils.filter_ngram
+                    n=2, uncased=True, filter_fn=retriever.utils.filter_ngram
                 ))
                 score = sum((w_grams & q_grams).values())
                 if score > best_score:
