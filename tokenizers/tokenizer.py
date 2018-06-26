@@ -1,15 +1,16 @@
 
 """tokenization means: Given a character sequence and a defined document unit,
    tokenization is the task of chopping it up into pieces, called tokens ,
-   perhaps at the same time throwing away certain characters, such as punctuation."""
+   perhaps at the same time throwing away certain characters, such as punctuation.
+"""
 
-#Base tokenizer/tokens classes and utilities.
+# Base tokenizer/tokens classes and utilities.
 
-
-import copy  # a package in python, Assignment statements in Python do not copy objects,
-             # they create bindings between a target and an object.
-             # For collections that are mutable or contain mutable items,
-             # a copy is sometimes needed so one can change one copy without changing the other.
+import copy
+# a package in python, Assignment statements in Python do not copy objects,
+#  they create bindings between a target and an object.
+#  For collections that are mutable or contain mutable items,
+#  a copy is sometimes needed so one can change one copy without changing the other.
 
 
 class Tokens(object):
@@ -128,7 +129,7 @@ class Tokens(object):
             if ner_tag != non_ent:
                 # Chomp the sequence
                 start = idx
-                while (idx < len(entities) and entities[idx] == ner_tag):
+                while idx < len(entities) and entities[idx] == ner_tag:
                     idx += 1
                 groups.append((self.slice(start, idx).untokenize(), ner_tag))
             else:

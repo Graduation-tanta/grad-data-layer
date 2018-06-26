@@ -4,21 +4,24 @@
 
 """
 """
-
-import copy         # a package in python, Assignment statements in Python do not copy objects,
-                    # they create bindings between a target and an object.
-                    # For collections that are mutable or contain mutable items,
-                    # a copy is sometimes needed so one can change one copy without changing the other.
-import json
-import pexpect      # Pexpect allows your script to spawn a child application and control it
-                    # as if a human were typing commands.
 import os
+import copy
+# a package in python, Assignment statements in Python do not copy objects,
+# they create bindings between a target and an object.
+# For collections that are mutable or contain mutable items,
+# a copy is sometimes needed so one can change one copy without changing the other.
+import json
+import pexpect
+# Pexpect allows your script to spawn a child application and control it
+# as if a human were typing commands.
+
 
 DEFAULTS = {
     'corenlp_classpath': os.getenv('CLASSPATH')
 }
 
 """Base tokenizer/tokens classes and utilities."""
+
 
 class Tokens(object):
     """A class to represent a list of tokenized text."""
@@ -138,7 +141,7 @@ class Tokens(object):
             if ner_tag != non_ent:
                 # Chomp the sequence
                 start = idx
-                while (idx < len(entities) and entities[idx] == ner_tag):
+                while idx < len(entities) and entities[idx] == ner_tag:
                     idx += 1
                 groups.append((self.slice(start, idx).untokenize(), ner_tag))
             else:
@@ -169,10 +172,11 @@ class CoreNLPTokenizer(Tokenizer):
         """
         self.classpath = (kwargs.get('classpath') or
                           DEFAULTS['corenlp_classpath'])
-        self.annotators = copy.deepcopy(kwargs.get('annotators', set()))  # A deep copy constructs a new compound
-                                                                          # object and then, recursively,
-                                                                          # inserts copies into it of the objects found
-                                                                          # in the original.
+        self.annotators = copy.deepcopy(kwargs.get('annotators', set()))
+        # A deep copy constructs a new compound
+        #  object and then, recursively,
+        #  inserts copies into it of the objects found
+        #  in the original.
 
         self.mem = kwargs.get('mem', '2g')
         self._launch()
