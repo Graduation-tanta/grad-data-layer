@@ -39,28 +39,24 @@ def tokenize(text):
     global TOK
     tokens = TOK.tokenize(text)
     output = {
-        """Returns a list of the text of each token
-           Args:uncased: lower cases text
-        """
+        #https://datascience.stackexchange.com/questions/586/what-are-the-main-types-of-nlp-annotators
+        #Returns a list of the text of each token
+        #Args:uncased: lower cases text
         'words': tokens.words(),
 
-        """Returns a list of [start, end) character offsets of each token."""
+        #Returns a list of [start, end] character offsets of each token.
         'offsets': tokens.offsets(),
 
-        """Returns a list of part-of-speech tags of each token.
-           Returns None if this annotation was not included.
-        """
+        #Returns a list of part-of-speech tags of each token.
+        #Returns None if this annotation was not included.
         'pos': tokens.pos(),
 
-        """Returns a list of the lemmatized text of each token.
-           Returns None if this annotation was not included.
-        """
-        
+        #Returns a list of the lemmatized text of each token.
+        #Returns None if this annotation was not included.
         'lemma': tokens.lemmas(),
 
-        """Returns a list of named-entity-recognition tags of each token.
-           Returns None if this annotation was not included.
-        """
+        #Returns a list of named-entity-recognition tags of each token.
+        #Returns None if this annotation was not included.
         'ner': tokens.entities(),
     }
     return output

@@ -29,7 +29,7 @@ def get_class_re(name):
 PROCESS_TOK = None
 PROCESS_DB = None
 
-#init functions to initiate our variables
+#init functions to initiate our objects
 """ 
 in tokenizer, we have only one class which is corenlp.
 and we can determine operation depends on this class.

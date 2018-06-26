@@ -48,11 +48,18 @@ logger = logging.getLogger()
 
 PROCESS_TOK = None
 PROCESS_DB = None
-
-
+#init functions to initiate our objects
+""" 
+in tokenizer, we have only one class which is corenlp.
+and we can determine operation depends on this class.
+in database in retriever, the  determination of classes is 
+dependant on requirements either tfidf or sqlite.
+So we have 2 process tok and db
+"""
 def init(tokenizer_class, tokenizer_opts, db_class=None, db_opts=None):
     global PROCESS_TOK, PROCESS_DB
     PROCESS_TOK = tokenizer_class(**tokenizer_opts)
+    # Finalize: is responsible for adding a callback to the registry.
     Finalize(PROCESS_TOK, PROCESS_TOK.shutdown, exitpriority=100)
 
     # optionally open a db connection
@@ -60,12 +67,12 @@ def init(tokenizer_class, tokenizer_opts, db_class=None, db_opts=None):
         PROCESS_DB = db_class(**db_opts)
         Finalize(PROCESS_DB, PROCESS_DB.close, exitpriority=100)
 
-
+#fetch text by using doc_id in get_text function in DOCDB class
 def fetch_text(doc_id):
     global PROCESS_DB
-    return PROCESS_DB.get_doc_text(doc_id)
+    return PROCESS_DB.get_text(doc_id)
 
-
+#which should return a Tokens class with its function
 def tokenize_text(text):
     global PROCESS_TOK
     return PROCESS_TOK.tokenize(text)

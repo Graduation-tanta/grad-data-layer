@@ -15,16 +15,15 @@ from .. import tokenizers
 #https://docs.djangoproject.com/en/2.1/topics/logging/#using-logging
 logger = logging.getLogger(__name__)
 
- """Loads a pre-weighted inverted index of token/document terms.
-    Scores new queries by taking sparse dot products.
-    """
+
 class TfidfDocRanker(object):
-   
-  """
-        Args:
+    """Loads a pre-weighted inverted index of token/document terms.
+        Scores new queries by taking sparse dot products.
+    """
+    """Args:
             tfidf_path: path to saved model file
             strict: fail on empty queries or continue (and return empty result)
-        """
+    """
     def __init__(self, tfidf_path=None, strict=True):
       
         # Load from disk
@@ -83,7 +82,7 @@ class TfidfDocRanker(object):
        
         with ThreadPool(num_workers) as threads:
 
-#The partial() is used for partial function application which “freezes” some portion of a function’s arguments and/or keywords resulting in a new object with a simplified signature
+#The partial() is used for partial function application which ï¿½freezesï¿½ some portion of a functionï¿½s arguments and/or keywords resulting in a new object with a simplified signature
 #https://docs.python.org/2/library/functools.html
             closest_docs = partial(self.closest_docs, k=k)
             results = threads.map(closest_docs, queries)
