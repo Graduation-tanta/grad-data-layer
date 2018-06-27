@@ -292,14 +292,17 @@ def process(questions, answers, outfile, opts):
 
     # Load ranker
     """ranker: Ranking method for retrieving documents (e.g. 'tfidf')
-    with strict: 
+    without strict:  raise an exception in case of an encoding error 
     """
     ranker = opts['ranker_class'](strict=False)
+    # n-docs: Number of docs retrieved per question
     logger.info('Ranking documents (top %d per question)...' % opts['n_docs'])
+    # batch_closest_docs(): Process a batch of closest_docs requests multithreaded.
     ranked = ranker.batch_closest_docs(questions, k=opts['n_docs'])
     ranked = [r[0] for r in ranked]
 
     # Start pool of tokenizers with ner enabled
+    # workers: Number of CPU processes (for tokenizing, etc).
     workers = Pool(opts['workers'], initializer=init,
                    initargs=(opts['tokenizer_class'], {'annotators': {'ner'}}))
 
