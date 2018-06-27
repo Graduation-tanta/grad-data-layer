@@ -13,24 +13,24 @@ parser.add_argument('file', type=str)
 # relevant variable
 args = parser.parse_args()
 
-#open file to input the generated data line by line
+# open file to input the generated data line by line
 with open(args.file) as f:
     lines = f.readlines()
     for line in lines:
-        #json.loads(): load string, but load(): to load file
+        # json.loads(): load string, but load(): to load file
         data = json.loads(line)
         """join() method: is a string method, 
         and takes a list of things to join with the string
         so here, we want to add single quotation to question 
         """
         question = ' '.join(data['question'])
-        #there are many answers but one question. so, we take first answer.
-        #we determine start and end of first answer.
+        # there are many answers but one question. so, we take first answer.
+        # we determine start and end of first answer.
         start, end = data['answers'][0]
         doc = data['document']
-        #pre: to determine start of answer in document and put it in single quotation.
+        # pre: to determine start of answer in document and put it in single quotation.
         pre = ' '.join(doc[:start])
-        #determine the answer by color red and put it in single quotation and bold font
+        # determine the answer by color red and put it in single quotation and bold font
         ans = colored(' '.join(doc[start: end + 1]), 'red', attrs=['bold'])
         post = ' '.join(doc[end + 1:])
         print('-' * 50)

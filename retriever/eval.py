@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+# Copyright 2017-present, Facebook, Inc.
+# All rights reserved.
+#
+# This source code is licensed under the license found in the
+# LICENSE file in the root directory of this source tree.
 
 """Evaluate the accuracy of our retriever module."""
 
@@ -26,10 +32,11 @@ def get_class_re(name):
 # Multiprocessing target functions.
 # ------------------------------------------------------------------------------
 
+
 PROCESS_TOK = None
 PROCESS_DB = None
 
-#init functions to initiate our variables
+# init functions to initiate our objects
 """ 
 in tokenizer, we have only one class which is corenlp.
 and we can determine operation depends on this class.
@@ -38,10 +45,11 @@ dependant on requirements either tfidf or sqlite.
 So we have 2 process tok and db
 """
 
+
 def init(tokenizer_class, tokenizer_opts, db_class, db_opts):
     global PROCESS_TOK, PROCESS_DB
     PROCESS_TOK = tokenizer_class(**tokenizer_opts)
-    #Finalize: is responsible for adding a callback to the registry.
+    # Finalize: is responsible for adding a callback to the registry.
     Finalize(PROCESS_TOK, PROCESS_TOK.shutdown, exitpriority=100)
     PROCESS_DB = db_class(**db_opts)
     Finalize(PROCESS_DB, PROCESS_DB.close, exitpriority=100)
@@ -49,7 +57,7 @@ def init(tokenizer_class, tokenizer_opts, db_class, db_opts):
 
 def regex_match(text, pattern):
     """Test if a regex pattern is contained within a text."""
-    #https://docs.python.org/3/howto/regex.html
+    # https://docs.python.org/3/howto/regex.html
     """
        re.compile():  accepts an optional flags argument, used to enable various special features and syntax variations.
        re.IGNORECASE: Perform case-insensitive matching; character class and literal strings will match letters by ignoring case.
@@ -71,14 +79,14 @@ def regex_match(text, pattern):
 
 
 def has_answer(answer, doc_id, match):
-    #Check if a document contains an answer string.
+    # Check if a document contains an answer string.
 
     global PROCESS_DB, PROCESS_TOK
-    #by using get_text function in doc_db we will get text of document by its id
+    # by using get_text function in doc_db we will get text of document by its id
     text = PROCESS_DB.get_text(doc_id)
-    #get unicode of text and store it in text variable again
+    # get unicode of text and store it in text variable again
     text = utils.normalize(text)
-    #If `match` is string, token matching is done between the text and answer.
+    # If `match` is string, token matching is done between the text and answer.
     if match == 'string':
         """ tokenize: is a function in a base class in tokenizer which raise NotImplementedError.
         https://docs.python.org/3/library/exceptions.html#NotImplementedError 
@@ -105,7 +113,7 @@ def has_answer(answer, doc_id, match):
         single_answer = utils.normalize(answer[0])
         if regex_match(text, single_answer):
             return True
-    #or return False if answer in this document
+    # or return False if answer in this document
     return False
 
 
@@ -125,7 +133,7 @@ def get_score(answer_doc, match):
 
 if __name__ == '__main__':
 
-    #logging.getLogger(): implement a flexible event logging system for applications and libraries.
+    # logging.getLogger(): implement a flexible event logging system for applications and libraries.
     logger = logging.getLogger()
     """logger.setLevel: Sets the threshold for this logger to level.
     Logging messages which are less severe than level will be ignored
@@ -188,7 +196,7 @@ if __name__ == '__main__':
     # define processes
     tok_class = tokenizers.get_class(args.tokenizer)
     tok_opts = {}
-    #again
+    # again
     db_class = retriever.DocDB
     db_opts = {'db_path': args.doc_db}
     processes = ProcessPool(
