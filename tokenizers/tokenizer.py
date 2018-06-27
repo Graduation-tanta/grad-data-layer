@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+# Copyright 2017-present, Facebook, Inc.
+# All rights reserved.
+#
+# This source code is licensed under the license found in the
+# LICENSE file in the root directory of this source tree.
 
 """tokenization means: Given a character sequence and a defined document unit,
    tokenization is the task of chopping it up into pieces, called tokens ,
@@ -34,10 +40,8 @@ class Tokens(object):
     def slice(self, i=None, j=None):
         """Return a view of the list of tokens from [i, j)."""
         new_tokens = copy.copy(self)  # Return a shallow copy of self.
-
     # A shallow copy constructs a new compound object and then (to the extent possible)
     # inserts references into it to the objects found in the original.
-
         new_tokens.data = self.data[i: j]
         return new_tokens
 
@@ -110,9 +114,9 @@ class Tokens(object):
 
         # Concatenate into strings
         if as_strings:
+
             ngrams = ['{}'.format(' '.join(words[s:e])) for (s, e) in ngrams]
             # If you have a list of words, you can put them back together into a single string using join()
-
         return ngrams
 
     def entity_groups(self):

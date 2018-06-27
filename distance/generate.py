@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+# Copyright 2017-present, Facebook, Inc.
+# All rights reserved.
+#
+# This source code is licensed under the license found in the
+# LICENSE file in the root directory of this source tree.
 
 """A script to generate distantly supervised training data.
 
@@ -21,7 +27,6 @@ from nltk.tokenize import word_tokenize
 from nltk.chunk import ne_chunk
 from nltk.tag import pos_tag
 from .. import retriever, tokenizers
-
 
 
 def get_class_re(name):
@@ -79,6 +84,7 @@ def fetch_text(doc_id):
 
 def tokenize_text(text):
     global PROCESS_TOK
+    # return a Tokens class and access its functions.
     return PROCESS_TOK.tokenize(text)
 
 
@@ -112,11 +118,17 @@ def find_answer(paragraph, q_tokens, answer, opts):
       - This is the unigram + bigram overlap within +/- window_sz.
     """
     # Length check
+    """char-max            Maximum allowed context length
+       char-min            Minimum allowed context length
+       this arguments determined by user
+    """
     if len(paragraph) > opts['char_max'] or len(paragraph) < opts['char_min']:
         return
 
     # Answer check
-
+    """
+    regex: Flag if answers are expressed as regexps
+    """
     if opts['regex']:
         # Add group around the whole answer
         answer = '(%s)' % answer[0]
@@ -147,7 +159,6 @@ def find_answer(paragraph, q_tokens, answer, opts):
         """if regex of answers isn't found in paragraph we will return 
         list comprehension of answers if the some these in paragraph
         """
-
         answers = {a for a in answer if a in paragraph}
 
     if len(answers) == 0:
@@ -158,15 +169,35 @@ def find_answer(paragraph, q_tokens, answer, opts):
     # Entity check. Default tokenizer + NLTK to minimize falling through cracks
     q_tokens, q_nltk_ner = q_tokens
     for ne in q_tokens.entity_groups():
+        # if chunk isn't in paragraph return null
         if ne[0] not in paragraph:
             return
+    # if chunk isn't in q_nltk_ner return null
     for ne in q_nltk_ner:
         if ne not in paragraph:
             return
 
     # Search...
+    # object of tokenizer's method
     p_tokens = tokenize_text(paragraph)
+    """Returns a list of the text of each token
+    Args:
+        uncased: lower cases text
+    """
     p_words = p_tokens.words(uncased=True)
+    """Returns a list of all ngrams from length 1 to n.
+        Args:
+            n: upper limit of ngram length
+            uncased: lower cases text
+            filter_fn: user function that takes in an ngram list and returns
+              True or False to keep or not keep the ngram
+            as_string: return the ngram as a string vs list
+    """
+    """https://pymotw.com/2/collections/counter.html#counter
+    Counter(): is a container that keeps track of how many times equivalent values are added.
+    It can be used to implement the same algorithms for which
+    bag or multiset data structures are commonly used in other languages."""
+    # q_grams: is container to keep track how many(list of words, you can put them back together into a single string)
     q_grams = Counter(q_tokens.ngrams(
         n=2, uncased=True, filter_fn=retriever.utils.filter_ngram
     ))
@@ -175,19 +206,27 @@ def find_answer(paragraph, q_tokens, answer, opts):
     best_ex = None
     for ans in answers:
         try:
+            """Returns a list of the text of each token"""
             a_words = tokenize_text(ans).words(uncased=True)
         except RuntimeError:
+            # logger.warn(): Logs a message with level WARNING on this logger
             logger.warn('Failed to tokenize answer: %s' % ans)
             continue
         for idx in range(len(p_words)):
             if p_words[idx:idx + len(a_words)] == a_words:
                 # Overlap check
+                # window-sz: Use context on +/- window_sz for overlap measure
                 w_s = max(idx - opts['window_sz'], 0)
                 w_e = min(idx + opts['window_sz'] + len(a_words), len(p_words))
+                """Return a view of the list of tokens from [i, j).
+                i: w_s
+                j:w_e
+                w_tokens: is a list of data[w_s, w_e]"""
                 w_tokens = p_tokens.slice(w_s, w_e)
                 w_grams = Counter(w_tokens.ngrams(
                     n=2, uncased=True, filter_fn=retriever.utils.filter_ngram
                 ))
+                # score is sum of counter of list of words without stopwords
                 score = sum((w_grams & q_grams).values())
                 if score > best_score:
                     # Success! Set new score + formatted example
@@ -217,24 +256,44 @@ def search_docs(inputs, max_ex=5, opts=None):
     doc_ids, q_tokens, answer = inputs
     examples = []
     for i, doc_id in enumerate(doc_ids):
+        """re.split(): Split string by the occurrences of pattern.
+        https://docs.python.org/3.1/library/re.html#re.split
+        """
+        """we will split text fetched by doc_id by new line 
+        """
         for j, paragraph in enumerate(re.split(r'\n+', fetch_text(doc_id))):
+            # Return the best matching answer offsets from a paragraph.
+            # and storing it in found variable
             found = find_answer(paragraph, q_tokens, answer, opts)
+            # if found have value not null ,Reverse ranking, giving priority to early docs + paragraphs
             if found:
-                # Reverse ranking, giving priority to early docs + paragraphs
                 score = (found[0], -i, -j, random.random())
+                # max-ex:  Maximum matches generated per question.
+                # general options
                 if len(examples) < max_ex:
+                    """https://docs.python.org/3/library/heapq.html#heapq.heappush
+                    heapq.heappush(heap, item): Push the value item onto the heap, maintaining the heap invariant.
+                    """
                     heapq.heappush(examples, (score, found[1]))
                 else:
+                    """heapq.heappushpop(heap, item): Push item on the heap, then pop 
+                    and return the smallest item from the heap.
+                    """
                     heapq.heappushpop(examples, (score, found[1]))
     return [e[1] for e in examples]
 
 
 def process(questions, answers, outfile, opts):
     """Generate examples for all questions."""
+    # Logs a message with level INFO on this logger.
     logger.info('Processing %d question answer pairs...' % len(questions))
+    # Save two files
     logger.info('Will save to %s.dstrain and %s.dsdev' % (outfile, outfile))
 
     # Load ranker
+    """ranker: Ranking method for retrieving documents (e.g. 'tfidf')
+    with strict: 
+    """
     ranker = opts['ranker_class'](strict=False)
     logger.info('Ranking documents (top %d per question)...' % opts['n_docs'])
     ranked = ranker.batch_closest_docs(questions, k=opts['n_docs'])

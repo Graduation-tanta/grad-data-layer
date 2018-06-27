@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+# Copyright 2017-present, Facebook, Inc.
+# All rights reserved.
+#
+# This source code is licensed under the license found in the
+# LICENSE file in the root directory of this source tree.
+
 """Various retriever utilities."""
 
 import regex
@@ -85,10 +92,15 @@ def normalize(text):
 def filter_word(text):
 
     text = normalize(text)
+    """
+    \p{Punctuation}: any kind of punctuation character.
+    https://www.regular-expressions.info/unicode.html#prop
+    """
+
     if regex.match(r'^\p{P}+$', text):
         return True
     """The method lower() returns a copy of the string 
-    in which all case-based characters have been lowercased
+    in which all case-based characters have been lower cased
     """
     # https://www.tutorialspoint.com/python/string_lower.htm
     
