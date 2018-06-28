@@ -285,7 +285,8 @@ def search_docs(inputs, max_ex=5, opts=None):
 
 def process(questions, answers, outfile, opts):
     """Generate examples for all questions."""
-    # Logs a message with level INFO on this logger.
+    # Logs a message with level INFO on this logger
+    #  here, we log the length of question
     logger.info('Processing %d question answer pairs...' % len(questions))
     # Save two files
     logger.info('Will save to %s.dstrain and %s.dsdev' % (outfile, outfile))

@@ -13,12 +13,11 @@ import numpy as np
 import scipy.sparse as sp
 from sklearn.utils import murmurhash3_32
 
+
 # Sparse matrix(Compressed Sparse Row matrix csr) saving/loading helpers.
 
-
 def save_sparse_csr(filename, matrix, metadata=None):
-    
-    
+
     """
     indptr points to row starts (tells where each row begins).
     data is an array which contains all non-zero entries in the row-major order.
@@ -47,15 +46,16 @@ def load_sparse_csr(filename):
 
 
 # Token hashing.
-"""Unsigned 32 bit murmurhash for feature hashing."""
-
-
 def hash(token, num_buckets):
-    
+
+    """Unsigned 32 bit murmurhash for feature hashing."""
+    # MurmurHash: is a non-cryptographic hash function suitable for general hash-based lookup.
+    # The current version is MurmurHash3.
+
     return murmurhash3_32(token, positive=True) % num_buckets
 
-# Text cleaning.
 
+# Text cleaning.
 
 STOPWORDS = {
     'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your',
@@ -82,14 +82,16 @@ STOPWORDS = {
 
 
 def normalize(text):
-    # https://docs.python.org/3/library/unicodedata.html
+    """https://docs.python.org/3/library/unicodedata.html
+    unicodedata.normalize(): Return the normal form form for the Unicode string unistr.
+    Normal form D (NFD) is also known as canonical decomposition,
+    and translates each character into its decomposed form.
+    """
     return unicodedata.normalize('NFD', text)
 
 
-"""Take out english stopwords, punctuation, and compound endings."""
-
-
 def filter_word(text):
+    """Take out english stopwords, punctuation, and compound endings."""
 
     text = normalize(text)
     """
