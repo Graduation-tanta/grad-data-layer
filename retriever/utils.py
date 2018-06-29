@@ -83,7 +83,7 @@ STOPWORDS = {
 
 def normalize(text):
     """https://docs.python.org/3/library/unicodedata.html
-    unicodedata.normalize(): Return the normal form form for the Unicode string unistr.
+    unicodedata.normalize(): Return the normal form for the Unicode string unistr.
     Normal form D (NFD) is also known as canonical decomposition,
     and translates each character into its decomposed form.
     """

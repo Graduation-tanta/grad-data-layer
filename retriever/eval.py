@@ -147,8 +147,7 @@ if __name__ == '__main__':
     The instance is initialized with a format string for the message as a whole
     https://docs.python.org/3/library/logging.html#logging.Formatter
     """
-    fmt = logging.Formatter('%(asctime)s: [ %(message)s ]',
-                            '%m/%d/%Y %I:%M:%S %p')
+    fmt = logging.Formatter('%(asctime)s: [ %(message)s ]', '%m/%d/%Y %I:%M:%S %p')
     """
    logging.StreamHandler(): Returns a new instance of the StreamHandler class. If stream is specified,
     the instance will use it for logging output; otherwise, sys.stderr will be used.
